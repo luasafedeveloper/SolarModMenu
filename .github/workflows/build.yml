@@ -1,1 +1,21 @@
+name: Build Android Mod Menu
 
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v3
+        with:
+          ndk-version: r25c
+          local-cache: true
+
+      - name: Build with NDK
+        run: |
+          # 프로젝트에 Android.mk가 있는 경우 자동 빌드 수행
+          $ANDROID_NDK_HOME/ndk-build
