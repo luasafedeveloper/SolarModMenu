@@ -9,12 +9,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Android NDK
-        uses: nttld/setup-ndk@v2
-        with:
-          ndk-version: r25c
-          local-cache: true
+      - name: Download and Setup Android NDK
+        run: |
+          echo "Downloading Android NDK r25c..."
+          wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+          echo "Unzipping NDK..."
+          unzip -q android-ndk-r25c-linux.zip
+          echo "ANDROID_NDK_HOME=$PWD/android-ndk-r25c" >> $GITHUB_ENV
 
       - name: Build with NDK
         run: |
           $ANDROID_NDK_HOME/ndk-build
+
+      - name: Upload Built Library (.so)
+        uses: actions/upload-artifact@v4
+        with:
+          name: modmenu-so
+          path: libs/arm64-v8a/*.so
