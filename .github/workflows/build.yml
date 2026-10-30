@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: 코어 소스 가져오기
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: 필수 라이브러리(Dobby & ImGui) 클론
       run: |
@@ -29,7 +29,7 @@ jobs:
         ./android-ndk-r25c/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=jni/Android.mk NDK_APPLICATION_MK=jni/Application.mk || ./android-ndk-r25c/ndk-build
 
     - name: 완성된 .so 파일 저장 (Artifact)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: modmenu-so
         path: libs/arm64-v8a/libmodmenu.so
