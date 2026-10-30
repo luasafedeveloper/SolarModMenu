@@ -3,8 +3,9 @@ project(solar)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# 현재 디렉토리와 하위 폴더들을 헤더 검색 경로에 포함시킵니다.
+# 현재 디렉토리와 TINYSTL 폴더를 헤더 검색 경로에 추가합니다.
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/TINYSTL)
 
 # 빌드할 소스 파일 목록
 add_library(solar SHARED
