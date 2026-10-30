@@ -3,19 +3,20 @@ project(solar)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# 현재 디렉토리와 TINYSTL 폴더를 헤더 검색 경로에 추가합니다.
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/TINYSTL)
+# Dobby 라이브러리를 서브디렉토리로 통째로 빌드에 포함
+add_subdirectory(dobby_lib)
 
-# 빌드할 소스 파일 목록
+# 내 모드 메뉴 라이브러리 설정
 add_library(solar SHARED
     main.cpp
     imgui.cpp
     imgui_draw.cpp
     imgui_tables.cpp
     imgui_widgets.cpp
-    dobby.cpp
 )
 
-# 안드로이드 빌드 시 필요한 라이브러리 링크
-target_link_libraries(solar PRIVATE log android)
+# Dobby 헤더 경로 연결
+target_include_directories(solar PRIVATE dobby_lib/include)
+
+# Dobby와 안드로이드 시스템 라이브러리 링크
+target_link_libraries(solar PRIVATE dobby log android)
