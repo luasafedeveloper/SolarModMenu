@@ -1,30 +1,35 @@
-name: Build Android .so
+name: Auto Build Mod Menu
 
-on: [push]
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 코어 소스 가져오기
+      uses: actions/checkout@v4
 
-      - name: Set up Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r26b
-          add-to-path: true
+    - name: 필수 라이브러리(Dobby & ImGui) 클론
+      run: |
+        mkdir -p jni
+        git clone --depth 1 https://github.com/jmpews/Dobby.git jni/dobby
+        git clone --depth 1 https://github.com/ocornut/imgui.git jni/imgui
 
-      - name: Build with CMake
-        run: |
-          mkdir build && cd build
-          cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake \
-                -DANDROID_ABI=arm64-v8a \
-                -DANDROID_PLATFORM=android-21 ..
-          make
+    - name: Android NDK 다운로드 및 설정
+      run: |
+        wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+        unzip -q android-ndk-r25c-linux.zip
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: compiled-so
-          path: build/*.so
+    - name: ndk-build 컴파일 실행
+      run: |
+        ./android-ndk-r25c/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=jni/Android.mk NDK_APPLICATION_MK=jni/Application.mk || ./android-ndk-r25c/ndk-build
+
+    - name: 완성된 .so 파일 저장 (Artifact)
+      uses: actions/upload-artifact@v4
+      with:
+        name: modmenu-so
+        path: libs/arm64-v8a/libmodmenu.so
