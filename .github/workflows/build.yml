@@ -16,12 +16,12 @@ jobs:
           git clone --depth 1 https://github.com/jmpews/Dobby.git dobby_lib
           rm -rf dobby_lib/.git
 
-      - name: Android NDK 다운로드 및 설정 (r25b)
+      - name: Android NDK 다운로드 및 설정 (r23c)
         run: |
-          echo "Downloading NDK r25b..."
-          wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
-          unzip -q android-ndk-r25b-linux.zip
-          echo "ANDROID_NDK_HOME=$PWD/android-ndk-r25b" >> $GITHUB_ENV
+          echo "Downloading NDK r23c..."
+          wget -q https://dl.google.com/android/repository/android-ndk-r23c-linux.zip
+          unzip -q android-ndk-r23c-linux.zip
+          echo "ANDROID_NDK_HOME=$PWD/android-ndk-r23c" >> $GITHUB_ENV
 
       - name: CMake 빌드 실행
         run: |
