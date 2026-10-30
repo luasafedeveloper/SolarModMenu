@@ -10,14 +10,25 @@ jobs:
       - name: 코어 소스 가져오기
         uses: actions/checkout@v4
 
-      - name: Dobby 라이브러리 가져오기 및 안드로이드 호환 패치
+      - name: Dobby 라이브러리 가져오기 및 어셈블리 문법 패치
         run: |
           rm -rf dobby_lib
           git clone --depth 1 https://github.com/jmpews/Dobby.git dobby_lib
           rm -rf dobby_lib/.git
-          # 애플 전용 어셈블리 문법을 안드로이드 ELF 문법으로 변환
-          find dobby_lib -name "*.S" -exec sed -i 's/@PAGE//g' {} +
-          find dobby_lib -name "*.S" -exec sed -i 's/@PAGEOFF/:lo12:/g' {} +
+          python3 -c '
+          import os, re
+          for root, dirs, files in os.walk("dobby_lib"):
+              for file in files:
+                  if file.endswith((".S", ".s")):
+                      path = os.path.join(root, file)
+                      with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                          content = f.read()
+                      # Apple 전용 @PAGE / @PAGEOFF 문법을 안드로이드 ELF 표준으로 변환
+                      content = re.sub(r"(\w+)@PAGE\b", r"\1", content)
+                      content = re.sub(r"(\w+)@PAGEOFF\b", r":lo12:\1", content)
+                      with open(path, "w", encoding="utf-8") as f:
+                          f.write(content)
+          '
 
       - name: Android NDK 다운로드 및 설정 (r23c)
         run: |
