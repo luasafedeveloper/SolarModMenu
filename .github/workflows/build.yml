@@ -12,7 +12,8 @@ jobs:
 
       - name: Dobby 라이브러리 가져오기
         run: |
-          git clone https://github.com/jmpews/Dobby.git dobby_lib
+          rm -rf dobby_lib
+          git clone --depth 1 https://github.com/jmpews/Dobby.git dobby_lib
           rm -rf dobby_lib/.git
 
       - name: Android NDK 다운로드 및 설정
