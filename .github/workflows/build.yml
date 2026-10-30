@@ -1,28 +1,36 @@
-name: Build Android Mod Menu
+name: Auto Build Mod Menu
 
-on: [push, pull_request]
+on:
+  push:
+      branches: [ "main" ]
+        workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        jobs:
+          build:
+              runs-on: ubuntu-latest
 
-      - name: Download and Setup Android NDK
-        run: |
-          echo "Downloading Android NDK r25c..."
-          wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
-          echo "Unzipping NDK..."
-          unzip -q android-ndk-r25c-linux.zip
-          echo "ANDROID_NDK_HOME=$PWD/android-ndk-r25c" >> $GITHUB_ENV
+                  steps:
+                      - name: 코어 소스 가져오기
+                            uses: actions/checkout@v3
 
-      - name: Build with NDK
-        run: |
-          $ANDROID_NDK_HOME/ndk-build
+                                - name: 필수 라이브러리(Dobby & ImGui) 클론
+                                      run: |
+                                              mkdir -p jni
+                                                      git clone --depth 1 https://github.com/jmpews/Dobby.git jni/dobby
+                                                              git clone --depth 1 https://github.com/ocornut/imgui.git jni/imgui
 
-      - name: Upload Built Library (.so)
-        uses: actions/upload-artifact@v4
-        with:
-          name: modmenu-so
-          path: libs/arm64-v8a/*.so
+                                                                  - name: Android NDK 다운로드 및 설정
+                                                                        run: |
+                                                                                wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+                                                                                        unzip -q android-ndk-r25c-linux.zip
+
+                                                                                            - name: ndk-build 컴파일 실행
+                                                                                                  run: |
+                                                                                                          ./android-ndk-r25c/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=jni/Android.mk NDK_APPLICATION_MK=jni/Application.mk || ./android-ndk-r25c/ndk-build
+
+                                                                                                              - name: 완성된 .so 파일 저장 (Artifact)
+                                                                                                                    uses: actions/upload-artifact@v3
+                                                                                                                          with:
+                                                                                                                                  name: modmenu-so
+                                                                                                                                          path: libs/arm64-v8a/libmodmenu.so
+                                                                                                                                          
