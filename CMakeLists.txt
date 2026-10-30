@@ -3,7 +3,10 @@ project(solar)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# 빌드할 소스 파일 목록에 ImGui와 Dobby 파일들을 추가합니다.
+# 현재 디렉토리와 하위 폴더들을 헤더 검색 경로에 포함시킵니다.
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+# 빌드할 소스 파일 목록
 add_library(solar SHARED
     main.cpp
     imgui.cpp
